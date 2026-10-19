@@ -16,7 +16,7 @@ const Personajes = () => {
       <div className="rejilla">
         {personajes.map((p) => (
           <button key={p.id} className="tarjeta" onClick={() => setElegido(p)}>
-            <Foto className="tarjeta-foto" src={imagenes[p.wiki]} nombre={p.nombre} />
+            <Foto className="tarjeta-foto" src={p.imagen || imagenes[p.wiki]} nombre={p.nombre} />
             <span className="tarjeta-nombre">{p.nombre}</span>
             <span className="tarjeta-rol">{p.rol}</span>
           </button>
@@ -25,7 +25,7 @@ const Personajes = () => {
 
       {elegido && (
         <Modal titulo={elegido.nombre} onCerrar={() => setElegido(null)}>
-          <Foto className="detalle-foto" src={imagenes[elegido.wiki]} nombre={elegido.nombre} />
+          <Foto className="detalle-foto" src={elegido.imagen || imagenes[elegido.wiki]} nombre={elegido.nombre} />
           <h2 className="detalle-nombre">{elegido.nombre}</h2>
           <span className="etiqueta">{elegido.rol}</span>
           <p className="detalle-texto">{elegido.descripcion}</p>

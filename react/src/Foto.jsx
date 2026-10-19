@@ -18,6 +18,7 @@ const Foto = ({ src, nombre, className = '' }) => {
       className={`foto ${className}`}
       src={src}
       alt={nombre}
+      referrerPolicy="no-referrer"
       onError={() => setFallo(true)}
     />
   )
