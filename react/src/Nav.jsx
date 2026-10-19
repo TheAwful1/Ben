@@ -1,45 +1,43 @@
-import react from 'react'
-import {Link} from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
+// NavLink es como Link, pero agrega la clase "active" al enlace de la página actual.
 const Nav = () => {
   return (
-  <>
-  <nav class="nav">
- <ul className="navbar-nav">
-    <li className="nav-item">
-      <Link className="nav-link" to="/">
-        Portada
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link className="nav-link" to="/Personajes">
-        Personajes
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link className="nav-link" to="/Momentos">
-        Momentos
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link className="nav-link" to="/Acercade">
-        Acerca de
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link className="nav-link" to="/Juego">
-        Juego
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link className="nav-link" to="/Contratame">
-        Contratame
-      </Link>
-    </li>
-  </ul>
-</nav>
-  </>
-    )
+    <nav className="menu">
+      <ul className="menu-lista">
+        <li>
+          <NavLink className="menu-enlace" to="/" end>
+            Portada
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="menu-enlace" to="/Personajes">
+            Personajes
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="menu-enlace" to="/Momentos">
+            Momentos
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="menu-enlace" to="/Acercade">
+            Acerca de
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="menu-enlace" to="/Juego">
+            Juego
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="menu-enlace" to="/Contratame">
+            Contrátame
+          </NavLink>
+        </li>
+      </ul>
+    </nav>
+  )
 }
 
 export default Nav
