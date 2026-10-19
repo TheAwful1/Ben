@@ -13,13 +13,16 @@ function App() {
   <>
     <BrowserRouter>
       <Nav/>
+
+
+      
       <Routes>
-          <Route path="/" element={<Portada />} />
-          <Route path="/Pages/Personajes" element={<Personajes />} />
-          <Route path="/Pages/Momentos" element={<Momentos />} />
-          <Route path="/Pages/Acercade" element={<Acercade />} />
-          <Route path="/Pages/Juego" element={<Juego />} />
-           <Route path="/Pages/Contratame" element={<Contratame />} />
+          <Route path="/" element={<Portada/>} />
+          <Route path="/Personajes" element={<Personajes />} />
+          <Route path="/Momentos" element={<Momentos />} />
+          <Route path="/Acercade" element={<Acercade />} />
+          <Route path="/Juego" element={<Juego />} />
+           <Route path="/Contratame" element={<Contratame />} />
       </Routes>
     </BrowserRouter>
   </>

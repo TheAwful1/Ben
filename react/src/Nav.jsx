@@ -4,35 +4,35 @@ import {Link} from 'react-router-dom'
 const Nav = () => {
   return (
   <>
-  <nav class="navbar sm:navbar-expand bg-1 fg-2">
+  <nav class="nav">
  <ul className="navbar-nav">
     <li className="nav-item">
-      <Link className="nav-link" to="/Pages/Portada">
+      <Link className="nav-link" to="/">
         Portada
       </Link>
     </li>
     <li className="nav-item">
-      <Link className="nav-link" to="/Pages/Personajes">
+      <Link className="nav-link" to="/Personajes">
         Personajes
       </Link>
     </li>
     <li className="nav-item">
-      <Link className="nav-link" to="/Pages/Momentos">
+      <Link className="nav-link" to="/Momentos">
         Momentos
       </Link>
     </li>
     <li className="nav-item">
-      <Link className="nav-link" to="/Pages/Acercade">
+      <Link className="nav-link" to="/Acercade">
         Acerca de
       </Link>
     </li>
     <li className="nav-item">
-      <Link className="nav-link" to="/Pages/Juego">
+      <Link className="nav-link" to="/Juego">
         Juego
       </Link>
     </li>
     <li className="nav-item">
-      <Link className="nav-link" to="/Pages/Contratame">
+      <Link className="nav-link" to="/Contratame">
         Contratame
       </Link>
     </li>
