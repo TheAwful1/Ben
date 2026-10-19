@@ -3,6 +3,10 @@
 //  "wiki" = título de la página en https://ben10.fandom.com (de ahí se
 //  saca la imagen con la API; ver wiki.js). Si la imagen no carga, la
 //  app muestra un recuadro con la inicial, así que nunca se rompe.
+//
+//  Imagen propia (recomendado, también funciona sin internet): guarda el
+//  archivo en public/img/ y agrega a ese elemento  imagen: '/img/heatblast.png'
+//  Si existe 'imagen', se usa esa; si no, se pide a la wiki.
 // =====================================================================
 
 export const serie = {
