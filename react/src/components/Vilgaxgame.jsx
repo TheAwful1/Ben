@@ -17,7 +17,7 @@ const createGame = () => ({
   boss: {
     x: 735, y: GROUND - 105, w: 76, h: 105,
     hp: 180, face: -1, attackCooldown: 0,
-    stun: 0, vy: 0, onGround: true, jumpCooldown: 1.4,
+    stun: 0, vy: 0, onGround: true, jumpCooldown: 1.4, rangedCooldown: 1.2,
   },
   projectiles: [],
   controls: { left: false, right: false, jump: false, attack: false, special: false },
@@ -306,6 +306,7 @@ export default function VilgaxGame() {
       p.specialAnim = Math.max(0, p.specialAnim - dt);
       b.attackCooldown = Math.max(0, b.attackCooldown - dt);
       b.jumpCooldown = Math.max(0, b.jumpCooldown - dt);
+      b.rangedCooldown = Math.max(0, b.rangedCooldown - dt);
       b.stun = Math.max(0, b.stun - dt);
 
       let playerCenter = p.x + p.w / 2;
@@ -339,6 +340,20 @@ export default function VilgaxGame() {
       p.face = playerCenter < bossCenter ? 1 : -1;
       b.face = playerCenter < bossCenter ? -1 : 1;
 
+      // A distancia, Vilgax dispara una descarga de energía hacia Ben.
+      if (Math.abs(distance) > 175 && b.rangedCooldown <= 0) {
+        g.projectiles.push({
+          type: "vilgax",
+          owner: "boss",
+          x: bossCenter + b.face * 35,
+          y: b.y + 45,
+          vx: b.face * 285,
+          life: 2.5,
+          damage: 12,
+        });
+        b.rangedCooldown = 2.4;
+      }
+
       // Vilgax solo golpea si está cerca y comparte altura con el jugador.
       const verticalOverlap = p.y < b.y + b.h && p.y + p.h > b.y;
       if (Math.abs(distance) <= 104 && b.attackCooldown <= 0) {
@@ -356,6 +371,7 @@ export default function VilgaxGame() {
         if (g.form === "fire") {
           g.projectiles.push({
             type: "fire",
+            owner: "player",
             x: playerCenter + p.face * 25,
             y: p.y + 32,
             vx: p.face * 440,
@@ -387,6 +403,7 @@ export default function VilgaxGame() {
         } else {
           g.projectiles.push({
             type: "rock",
+            owner: "player",
             x: playerCenter + p.face * 30,
             y: p.y + 40,
             vx: p.face * 360,
@@ -402,6 +419,7 @@ export default function VilgaxGame() {
 
         if (
           projectile.life > 0 &&
+          projectile.owner === "player" &&
           projectile.x >= b.x - 10 &&
           projectile.x <= b.x + b.w + 10 &&
           projectile.y >= b.y &&
@@ -409,6 +427,19 @@ export default function VilgaxGame() {
         ) {
           b.hp = Math.max(0, b.hp - projectile.damage);
           b.stun = 0.16;
+          projectile.life = 0;
+        } else if (
+          projectile.life > 0 &&
+          projectile.owner === "boss" &&
+          projectile.x >= p.x - 10 &&
+          projectile.x <= p.x + p.w + 10 &&
+          projectile.y >= p.y &&
+          projectile.y <= p.y + p.h
+        ) {
+          if (p.invuln <= 0) {
+            p.hp = Math.max(0, p.hp - projectile.damage);
+            p.invuln = 0.75;
+          }
           projectile.life = 0;
         }
       }
@@ -439,7 +470,17 @@ export default function VilgaxGame() {
 
       // Proyectiles de fuego y rocas lanzadas por Cuatro Brazos.
       for (const projectile of g.projectiles) {
-        if (projectile.type === "rock") {
+        if (projectile.type === "vilgax") {
+          ctx.fillStyle = "#df334a";
+          ctx.beginPath();
+          ctx.arc(projectile.x, projectile.y, 13, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#ffb4bd";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(projectile.x, projectile.y, 7, 0, Math.PI * 2);
+          ctx.stroke();
+        } else if (projectile.type === "rock") {
           ctx.save();
           ctx.translate(projectile.x, projectile.y);
           ctx.rotate(projectile.x * 0.015);
