@@ -223,18 +223,10 @@ export const momentos = [
   },
   {
     id: 'm2',
-<<<<<<< HEAD
     titulo: 'Ben 10 vs Vilgax',
     wiki: 'Hunted',
     detalle:
       'Ben enfrenta uno de sus mayores retos: Vilgax!!.',
-=======
-    titulo: 'Ben vs Vilgax',
-    wiki: 'Vilgax',
-    imagen: '/img/ben-vs-vilgax.webp',
-    detalle:
-      'Vilgax es el conquistador alienígena que quiere el Omnitrix a cualquier precio, y su enfrentamiento con Ben es uno de los momentos más importantes de la serie. Ben tiene que usar todos sus aliens, y la ayuda de Gwen y del Abuelo Max, para plantarle cara.',
->>>>>>> 22ab11bc30a68eeb7868d4ccde53aaf78f9f9474
     video: '',
     archivo: '',
   },
