@@ -1,7 +1,5 @@
-import VilgaxGame from "./components/VilgaxGame";
-
-import { useEffect, useRef } from "react";
-import "./VilgaxGame.css";
+import { useEffect, useRef, useState } from "react";
+import "./Vilgaxgame.css";
 
 const WIDTH = 960;
 const HEIGHT = 540;
@@ -218,6 +216,8 @@ function drawVilgax(ctx, b) {
 }
 
 export default function VilgaxGame() {
+  const [started, setStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
   const canvasRef = useRef(null);
   const gameRef = useRef(null);
   const controlsRef = useRef({
@@ -225,6 +225,8 @@ export default function VilgaxGame() {
   });
 
   useEffect(() => {
+    if (!started) return undefined;
+
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -262,9 +264,7 @@ export default function VilgaxGame() {
       const left = c.left || keys.has("a") || keys.has("arrowleft");
       const right = c.right || keys.has("d") || keys.has("arrowright");
       const jump = c.jump || keys.has("w") || keys.has("arrowup") || keys.has(" ");
-
-      if (keys.has("j")) c.attack = true;
-      else if (!c.attack) c.attack = false;
+      const attacking = c.attack || keys.has("j");
 
       p.vx = 0;
       if (left) {
@@ -308,8 +308,8 @@ export default function VilgaxGame() {
       // Vilgax persigue al jugador y ataca cuando está cerca.
       b.face = distance < 0 ? -1 : 1;
 
-      if (Math.abs(distance) > 92 && b.stun <= 0) {
-        b.x += Math.sign(distance) * 105 * dt;
+      if (Math.abs(distance) > 92) {
+        if (b.stun <= 0) b.x += Math.sign(distance) * 105 * dt;
       } else if (b.attackCooldown <= 0) {
         if (Math.abs(distance) < 112 && p.invuln <= 0) {
           p.hp = Math.max(0, p.hp - 13);
@@ -318,10 +318,10 @@ export default function VilgaxGame() {
         b.attackCooldown = 1.15;
       }
 
-      b.x = Math.max(450, Math.min(WIDTH - b.w - 8, b.x));
+      b.x = Math.max(8, Math.min(WIDTH - b.w - 8, b.x));
 
       // Un único botón de ataque. La forma seleccionada decide el efecto.
-      if (c.attack && p.attackCooldown <= 0) {
+      if (attacking && p.attackCooldown <= 0) {
         p.attackCooldown = g.form === "fire" ? 0.55 : 0.7;
         p.attackAnim = 0.22;
 
@@ -411,7 +411,7 @@ export default function VilgaxGame() {
           HEIGHT / 2
         );
         ctx.font = "20px sans-serif";
-        ctx.fillText("Recarga la página para volver a jugar", WIDTH / 2, HEIGHT / 2 + 42);
+        ctx.fillText("Vuelve al menú para intentarlo de nuevo", WIDTH / 2, HEIGHT / 2 + 42);
         ctx.textAlign = "left";
       }
     }
@@ -421,6 +421,10 @@ export default function VilgaxGame() {
       lastTime = time;
       update(dt);
       draw();
+      if ((g.player.hp <= 0 || g.boss.hp <= 0) && !g.gameOverReported) {
+        g.gameOverReported = true;
+        setGameOver(true);
+      }
       raf = requestAnimationFrame(frame);
     }
 
@@ -432,10 +436,22 @@ export default function VilgaxGame() {
       window.removeEventListener("keyup", onKeyUp);
       gameRef.current = null;
     };
-  }, []);
+  }, [started]);
 
   function setControl(name, value) {
     controlsRef.current[name] = value;
+  }
+
+  function startGame() {
+    controlsRef.current = { left: false, right: false, jump: false, attack: false };
+    setGameOver(false);
+    setStarted(true);
+  }
+
+  function returnToMenu() {
+    controlsRef.current = { left: false, right: false, jump: false, attack: false };
+    setGameOver(false);
+    setStarted(false);
   }
 
   function chooseForm(form) {
@@ -460,6 +476,31 @@ export default function VilgaxGame() {
       >
         {label}
       </button>
+    );
+  }
+
+
+  if (!started) {
+    return (
+      <section className="vilgax-game">
+        <div
+          className="vilgax-game__menu"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, rgba(3, 14, 8, 0.9), rgba(3, 14, 8, 0.4)), url('/img/ben-vs-vilgax.webp')",
+          }}
+        >
+          <div className="vilgax-game__menu-content">
+            <p className="vilgax-game__eyebrow">UNA BATALLA POR LA TIERRA</p>
+            <h1 className="vilgax-game__title">BEN 10</h1>
+            <h2 className="vilgax-game__subtitle">SAVAGE PURSUIT</h2>
+            <p className="vilgax-game__tagline">Enfréntate a Vilgax en la jungla.</p>
+            <button type="button" className="game-control vilgax-game__start" onClick={startGame}>
+              INICIAR
+            </button>
+          </div>
+        </div>
+      </section>
     );
   }
 
@@ -508,10 +549,11 @@ export default function VilgaxGame() {
         Teclado: A/D o flechas para moverte, W/Espacio para saltar,
         J para atacar y 1/2 para cambiar de forma.
       </p>
+      {gameOver && (
+        <button type="button" className="game-control vilgax-game__return" onClick={returnToMenu}>
+          VOLVER AL MENÚ
+        </button>
+      )}
     </section>
   );
-}
-
-export default function GameView() {
-  return <VilgaxGame />;
 }
