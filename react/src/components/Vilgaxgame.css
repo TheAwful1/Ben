@@ -139,3 +139,108 @@
     margin-left: 3px;
   }
 }
+
+
+/* ---------- Pantalla de inicio y cierre del combate ---------- */
+.vilgax-game__menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 390px;
+  aspect-ratio: 16 / 9;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: clamp(22px, 5vw, 64px);
+  border: 2px solid #52675c;
+  border-radius: 8px;
+  background-color: #10251a;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.vilgax-game__menu-content {
+  width: min(100%, 440px);
+  text-align: left;
+}
+
+.vilgax-game__eyebrow {
+  margin: 0 0 10px;
+  color: #ffd36b;
+  font-size: clamp(0.7rem, 1.4vw, 0.9rem);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+}
+
+.vilgax-game__title {
+  margin: 0;
+  color: #7df542;
+  font-size: clamp(3rem, 9vw, 6.3rem);
+  font-weight: 1000;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  text-shadow: 3px 4px 0 #14351f, 0 0 26px rgba(97, 255, 57, 0.4);
+}
+
+.vilgax-game__subtitle {
+  margin: 8px 0 18px;
+  color: #f4f0d7;
+  font-size: clamp(1.1rem, 3.2vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-shadow: 2px 3px 0 #17251a;
+}
+
+.vilgax-game__tagline {
+  margin: 0 0 24px;
+  color: #f0f5e9;
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+  text-shadow: 1px 2px 4px #000;
+}
+
+.vilgax-game__start {
+  min-width: 160px;
+  padding: 13px 28px;
+  border: 2px solid #c7ff7b;
+  background: #71d832;
+  color: #10220e;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  box-shadow: 0 0 22px rgba(113, 216, 50, 0.35);
+}
+
+.vilgax-game__start:hover {
+  background: #91f34b;
+}
+
+.vilgax-game__return {
+  display: block;
+  margin: 12px auto 0;
+  border-color: #e87b39;
+  background: #a33b27;
+}
+
+@media (max-width: 600px) {
+  .vilgax-game__menu {
+    min-height: 340px;
+    padding: 22px;
+    background-position: 58% center;
+  }
+
+  .vilgax-game__menu-content {
+    max-width: 290px;
+  }
+
+  .vilgax-game__eyebrow {
+    letter-spacing: 0.12em;
+  }
+
+  .vilgax-game__tagline {
+    margin-bottom: 18px;
+  }
+
+  .vilgax-game__start {
+    min-width: 135px;
+  }
+}
