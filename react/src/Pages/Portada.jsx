@@ -54,7 +54,7 @@ const Portada = () => {
             {aliens.map((a, i) => (
               <article className="slide" key={a.id} aria-hidden={i !== indice} style={{ '--color': a.color }}>
                 <div className="slide-imagen">
-                  <Foto src={imagenes[a.wiki]} nombre={a.nombre} />
+                  <Foto src={a.imagen || imagenes[a.wiki]} nombre={a.nombre} />
                 </div>
                 <div className="slide-info">
                   <span className="slide-numero">

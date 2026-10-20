@@ -3,6 +3,10 @@
 //  "wiki" = título de la página en https://ben10.fandom.com (de ahí se
 //  saca la imagen con la API; ver wiki.js). Si la imagen no carga, la
 //  app muestra un recuadro con la inicial, así que nunca se rompe.
+//
+//  Imagen propia (recomendado, también funciona sin internet): guarda el
+//  archivo en public/img/ y agrega a ese elemento  imagen: '/img/heatblast.png'
+//  Si existe 'imagen', se usa esa; si no, se pide a la wiki.
 // =====================================================================
 
 export const serie = {
@@ -28,6 +32,7 @@ export const aliens = [
     id: 'heatblast',
     nombre: 'Heatblast',
     wiki: 'Heatblast',
+    imagen: '/img/Heatblast_OS.webp',
     especie: 'Pyronite',
     planeta: 'Pyros',
     poder: 'Controla y lanza fuego',
@@ -39,6 +44,7 @@ export const aliens = [
     id: 'wildmutt',
     nombre: 'Wildmutt',
     wiki: 'Wildmutt',
+    imagen: '/img/Wildmutt_OS.webp',
     especie: 'Vulpimancer',
     planeta: 'Vulpin',
     poder: 'Agilidad, fuerza y sentidos muy agudos',
@@ -50,6 +56,7 @@ export const aliens = [
     id: 'diamondhead',
     nombre: 'Diamondhead',
     wiki: 'Diamondhead',
+    imagen: '/img/Diamondhead_OS.webp',
     especie: 'Petrosapien',
     planeta: 'Petropia',
     poder: 'Lanza y moldea cristales',
@@ -61,6 +68,7 @@ export const aliens = [
     id: 'xlr8',
     nombre: 'XLR8',
     wiki: 'XLR8',
+    imagen: '/img/XLR8OS.webp',
     especie: 'Kineceleran',
     planeta: 'Kinet',
     poder: 'Súper velocidad',
@@ -72,6 +80,7 @@ export const aliens = [
     id: 'greymatter',
     nombre: 'Grey Matter',
     wiki: 'Grey Matter',
+    imagen: '/img/Grey_Matter_OS.webp',
     especie: 'Galvan',
     planeta: 'Galvan Prime',
     poder: 'Inteligencia genial y tamaño diminuto',
@@ -83,6 +92,7 @@ export const aliens = [
     id: 'fourarms',
     nombre: 'Four Arms',
     wiki: 'Four Arms',
+    imagen: '/img/ANDREW_ROBINSON_FOURARMS.webp',
     especie: 'Tetramand',
     planeta: 'Khoros',
     poder: 'Súper fuerza',
@@ -94,6 +104,7 @@ export const aliens = [
     id: 'stinkfly',
     nombre: 'Stinkfly',
     wiki: 'Stinkfly',
+    imagen: '/img/Stinkfly_os_render.webp',
     especie: 'Lepidopterran',
     planeta: 'Lepidopterra',
     poder: 'Vuelo y disparos de baba',
@@ -105,6 +116,7 @@ export const aliens = [
     id: 'ripjaws',
     nombre: 'Ripjaws',
     wiki: 'Ripjaws',
+    imagen: '/img/Ripjaws_OS.webp',
     especie: 'Piscciss Volann',
     planeta: 'Piscciss',
     poder: 'Respira bajo el agua y muerde con fuerza',
@@ -116,6 +128,7 @@ export const aliens = [
     id: 'upgrade',
     nombre: 'Upgrade',
     wiki: 'Upgrade',
+    imagen: '/img/Upgrade_Model.webp',
     especie: 'Galvanic Mechamorph',
     planeta: 'Galvan B',
     poder: 'Se fusiona con las máquinas y las controla',
@@ -127,6 +140,7 @@ export const aliens = [
     id: 'ghostfreak',
     nombre: 'Ghostfreak',
     wiki: 'Ghostfreak',
+    imagen: '/img/GhostfreakPose2.webp',
     especie: 'Ectonurite',
     planeta: 'Anur Phaetos',
     poder: 'Intangibilidad e invisibilidad',
@@ -141,6 +155,7 @@ export const personajes = [
     id: 'ben',
     nombre: 'Ben Tennyson',
     wiki: 'Ben Tennyson',
+    imagen: '/img/Ben_Tennyson_29_Original_Series_Pose_1.webp',
     rol: 'Protagonista',
     descripcion:
       'Un niño de 10 años, bromista e impulsivo, que encuentra el Omnitrix durante un viaje de verano y se convierte en héroe.',
@@ -154,6 +169,7 @@ export const personajes = [
     id: 'gwen',
     nombre: 'Gwen Tennyson',
     wiki: 'Gwen Tennyson',
+    imagen: '/img/Gwen_Tennyson_29_Original_Series_Pose_1.webp',
     rol: 'Prima de Ben',
     descripcion:
       'Lista, curiosa y con respuesta para todo. Acompaña a Ben en el viaje y muchas veces es quien lo saca de los problemas.',
@@ -163,6 +179,7 @@ export const personajes = [
     id: 'max',
     nombre: 'Abuelo Max',
     wiki: 'Max Tennyson',
+    imagen: '/img/Max_tenyson_poses_29.webp',
     rol: 'Guía del viaje',
     descripcion:
       'El abuelo de Ben y Gwen. Maneja la casa rodante del viaje y esconde un pasado como Plomero, una organización que protege la Tierra de amenazas alienígenas.',
@@ -172,6 +189,7 @@ export const personajes = [
     id: 'vilgax',
     nombre: 'Vilgax',
     wiki: 'Vilgax',
+    imagen: '/img/Vilgax_Serie_Original.webp',
     rol: 'Villano principal',
     descripcion:
       'Un conquistador alienígena que quiere el Omnitrix a cualquier precio. Envía cazarrecompensas para quitárselo a Ben.',
@@ -181,6 +199,7 @@ export const personajes = [
     id: 'kevin',
     nombre: 'Kevin Levin',
     wiki: 'Kevin Levin',
+    imagen: '/img/Kevin_Levin_OS_Render.webp',
     rol: 'Rival de Ben',
     descripcion:
       'Un chico que absorbe energía y copia poderes. Empieza como enemigo de Ben y su relación cambia a lo largo de la serie.',

@@ -46,7 +46,7 @@ const Momentos = () => {
       <div className="rejilla rejilla-momentos">
         {momentos.map((m) => (
           <button key={m.id} className="tarjeta tarjeta-momento" onClick={() => setElegido(m)}>
-            <Foto className="momento-foto" src={imagenes[m.wiki]} nombre={m.titulo} />
+            <Foto className="momento-foto" src={m.imagen || imagenes[m.wiki]} nombre={m.titulo} />
             <span className="tarjeta-nombre">{m.titulo}</span>
           </button>
         ))}
@@ -54,7 +54,7 @@ const Momentos = () => {
 
       {elegido && (
         <Modal titulo={elegido.titulo} onCerrar={() => setElegido(null)}>
-          <Foto className="momento-detalle-foto" src={imagenes[elegido.wiki]} nombre={elegido.titulo} />
+          <Foto className="momento-detalle-foto" src={elegido.imagen || imagenes[elegido.wiki]} nombre={elegido.titulo} />
           <h2 className="detalle-nombre">{elegido.titulo}</h2>
           <p className="detalle-texto">{elegido.detalle}</p>
           <Reproductor momento={elegido} />
