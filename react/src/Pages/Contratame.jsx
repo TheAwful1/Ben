@@ -59,6 +59,13 @@ const tecnologias = [
     descripcion: 'Dibujo en tiempo real para el prototipo de combate dentro del navegador.',
     clase: 'canvas',
   },
+  {
+    nombre: 'Git / GitHub',
+    marca: 'git',
+    tipo: 'Control de versiones',
+    descripcion: 'Historial de cambios, ramas y colaboración mediante pull requests.',
+    clase: 'git',
+  },
 ]
 
 const Contratame = () => {
