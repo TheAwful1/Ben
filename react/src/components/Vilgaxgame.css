@@ -498,3 +498,21 @@
     background-position: 60% center;
   }
 }
+
+
+/* Keep the original 16:9 game world proportional while filling the viewport. */
+.vilgax-game__screen canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100vw, 177.7778dvh);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+  object-fit: fill;
+}
+
+.vilgax-game__screen {
+  overflow: hidden;
+  background: #050908;
+}
