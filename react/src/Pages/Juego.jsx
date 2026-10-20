@@ -1,9 +1,5 @@
 import VilgaxGame from "../components/Vilgaxgame.jsx";
 
-const Juego = () => (
-  <main className="pagina pagina-juego">
-    <VilgaxGame />
-  </main>
-);
+const Juego = () => <VilgaxGame />;
 
 export default Juego;
