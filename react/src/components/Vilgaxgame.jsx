@@ -11,15 +11,16 @@ const createGame = () => ({
     x: 130, y: GROUND - 72, w: 42, h: 72,
     vx: 0, vy: 0, hp: 100, face: 1,
     onGround: true, invuln: 0,
-    attackCooldown: 0, attackAnim: 0,
+    attackCooldown: 0, specialCooldown: 0,
+    attackAnim: 0, specialAnim: 0,
   },
   boss: {
     x: 735, y: GROUND - 105, w: 76, h: 105,
     hp: 180, face: -1, attackCooldown: 0,
-    stun: 0,
+    stun: 0, vy: 0, onGround: true, jumpCooldown: 1.4,
   },
   projectiles: [],
-  controls: { left: false, right: false, jump: false, attack: false },
+  controls: { left: false, right: false, jump: false, attack: false, special: false },
   jumpLocked: false,
 });
 
@@ -161,20 +162,27 @@ function drawPlayer(ctx, p, form) {
   const eyeX = p.face > 0 ? x + 27 : x + 13;
   ctx.fillRect(eyeX, y + 14, 5, 4);
 
-  // Animación de ataque cuerpo a cuerpo
-  if (!fire && p.attackAnim > 0) {
-    ctx.strokeStyle = "#ffe6a0";
-    ctx.lineWidth = 5;
+  // Indicador visual para los ataques físicos de ambas formas.
+  if (p.attackAnim > 0) {
+    ctx.strokeStyle = fire ? "#ffb52c" : "#ffe6a0";
+    ctx.lineWidth = fire ? 7 : 5;
     ctx.beginPath();
     const side = p.face;
     ctx.arc(
       x + 21 + side * 25,
       y + 31,
-      25,
+      fire ? 30 : 25,
       side > 0 ? -0.9 : Math.PI - 0.9,
       side > 0 ? 0.9 : Math.PI + 0.9
     );
     ctx.stroke();
+  }
+
+  if (fire && p.specialAnim > 0) {
+    ctx.fillStyle = "rgba(255, 133, 30, 0.28)";
+    ctx.beginPath();
+    ctx.ellipse(x + 21 + p.face * 22, y + 35, 35, 24, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
@@ -221,7 +229,7 @@ export default function VilgaxGame() {
   const canvasRef = useRef(null);
   const gameRef = useRef(null);
   const controlsRef = useRef({
-    left: false, right: false, jump: false, attack: false,
+    left: false, right: false, jump: false, attack: false, special: false,
   });
 
   useEffect(() => {
@@ -265,19 +273,15 @@ export default function VilgaxGame() {
       const right = c.right || keys.has("d") || keys.has("arrowright");
       const jump = c.jump || keys.has("w") || keys.has("arrowup") || keys.has(" ");
       const attacking = c.attack || keys.has("j");
+      const specialing = c.special || keys.has("k");
 
       p.vx = 0;
-      if (left) {
-        p.vx = -220;
-        p.face = -1;
-      }
-      if (right) {
-        p.vx = 220;
-        p.face = 1;
-      }
+      if (left) p.vx = -220;
+      if (right) p.vx = 220;
 
       if (jump && p.onGround && !g.jumpLocked) {
-        p.vy = -480;
+        // Ben salta un poco más alto que Vilgax.
+        p.vy = -540;
         p.onGround = false;
         g.jumpLocked = true;
       }
@@ -297,49 +301,98 @@ export default function VilgaxGame() {
 
       p.invuln = Math.max(0, p.invuln - dt);
       p.attackCooldown = Math.max(0, p.attackCooldown - dt);
+      p.specialCooldown = Math.max(0, p.specialCooldown - dt);
       p.attackAnim = Math.max(0, p.attackAnim - dt);
+      p.specialAnim = Math.max(0, p.specialAnim - dt);
       b.attackCooldown = Math.max(0, b.attackCooldown - dt);
+      b.jumpCooldown = Math.max(0, b.jumpCooldown - dt);
       b.stun = Math.max(0, b.stun - dt);
 
-      const playerCenter = p.x + p.w / 2;
-      const bossCenter = b.x + b.w / 2;
-      const distance = playerCenter - bossCenter;
+      let playerCenter = p.x + p.w / 2;
+      let bossCenter = b.x + b.w / 2;
+      let distance = playerCenter - bossCenter;
 
-      // Vilgax persigue al jugador y ataca cuando está cerca.
-      b.face = distance < 0 ? -1 : 1;
+      // Vilgax también puede saltar, pero no alcanza la altura de Ben.
+      if (b.onGround && b.jumpCooldown <= 0 && Math.abs(distance) < 250) {
+        b.vy = -430;
+        b.onGround = false;
+        b.jumpCooldown = 2.8;
+      }
+      b.vy += 1250 * dt;
+      b.y += b.vy * dt;
+      if (b.y + b.h >= GROUND) {
+        b.y = GROUND - b.h;
+        b.vy = 0;
+        b.onGround = true;
+      }
 
-      if (Math.abs(distance) > 92) {
-        if (b.stun <= 0) b.x += Math.sign(distance) * 105 * dt;
-      } else if (b.attackCooldown <= 0) {
-        if (Math.abs(distance) < 112 && p.invuln <= 0) {
+      // Vilgax persigue horizontalmente al jugador.
+      if (Math.abs(distance) > 92 && b.stun <= 0) {
+        b.x += Math.sign(distance) * 105 * dt;
+      }
+      b.x = Math.max(8, Math.min(WIDTH - b.w - 8, b.x));
+
+      // Ambos personajes siempre miran hacia su oponente, no hacia el último movimiento.
+      playerCenter = p.x + p.w / 2;
+      bossCenter = b.x + b.w / 2;
+      distance = playerCenter - bossCenter;
+      p.face = playerCenter < bossCenter ? 1 : -1;
+      b.face = playerCenter < bossCenter ? -1 : 1;
+
+      // Vilgax solo golpea si está cerca y comparte altura con el jugador.
+      const verticalOverlap = p.y < b.y + b.h && p.y + p.h > b.y;
+      if (Math.abs(distance) <= 104 && b.attackCooldown <= 0) {
+        if (verticalOverlap && p.invuln <= 0) {
           p.hp = Math.max(0, p.hp - 13);
           p.invuln = 0.9;
         }
         b.attackCooldown = 1.15;
       }
 
-      b.x = Math.max(8, Math.min(WIDTH - b.w - 8, b.x));
-
-      // Un único botón de ataque. La forma seleccionada decide el efecto.
+      // J / botón ATAQUE: Fuego dispara; Cuatro Brazos golpea cuerpo a cuerpo.
       if (attacking && p.attackCooldown <= 0) {
-        p.attackCooldown = g.form === "fire" ? 0.55 : 0.7;
-        p.attackAnim = 0.22;
+        p.attackCooldown = g.form === "fire" ? 0.5 : 0.68;
 
         if (g.form === "fire") {
           g.projectiles.push({
+            type: "fire",
             x: playerCenter + p.face * 25,
             y: p.y + 32,
             vx: p.face * 440,
             life: 1.6,
             damage: 18,
           });
-        } else if (
-          Math.abs(distance) < 135 &&
-          Math.sign(distance) === p.face
-        ) {
-          b.hp = Math.max(0, b.hp - 28);
-          b.stun = 0.2;
-          b.x += p.face * 10;
+        } else {
+          p.attackAnim = 0.24;
+          if (Math.abs(distance) < 132) {
+            b.hp = Math.max(0, b.hp - 24);
+            b.stun = 0.22;
+            b.x += p.face * 10;
+          }
+        }
+      }
+
+      // K / botón ESPECIAL: Fuego da un golpe cercano; Cuatro Brazos lanza una roca.
+      if (specialing && p.specialCooldown <= 0) {
+        p.specialCooldown = g.form === "fire" ? 0.82 : 1.05;
+        p.specialAnim = 0.28;
+
+        if (g.form === "fire") {
+          p.attackAnim = 0.25;
+          if (Math.abs(distance) < 100) {
+            b.hp = Math.max(0, b.hp - 27);
+            b.stun = 0.28;
+            b.x += p.face * 12;
+          }
+        } else {
+          g.projectiles.push({
+            type: "rock",
+            x: playerCenter + p.face * 30,
+            y: p.y + 40,
+            vx: p.face * 360,
+            life: 2,
+            damage: 16,
+          });
         }
       }
 
@@ -352,7 +405,7 @@ export default function VilgaxGame() {
           projectile.x >= b.x - 10 &&
           projectile.x <= b.x + b.w + 10 &&
           projectile.y >= b.y &&
-          projectile.y <= GROUND
+          projectile.y <= b.y + b.h
         ) {
           b.hp = Math.max(0, b.hp - projectile.damage);
           b.stun = 0.16;
@@ -384,16 +437,35 @@ export default function VilgaxGame() {
         83
       );
 
-      // Proyectiles de fuego
+      // Proyectiles de fuego y rocas lanzadas por Cuatro Brazos.
       for (const projectile of g.projectiles) {
-        ctx.fillStyle = "#ffb326";
-        ctx.beginPath();
-        ctx.arc(projectile.x, projectile.y, 10, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#fff2ac";
-        ctx.beginPath();
-        ctx.arc(projectile.x, projectile.y, 5, 0, Math.PI * 2);
-        ctx.fill();
+        if (projectile.type === "rock") {
+          ctx.save();
+          ctx.translate(projectile.x, projectile.y);
+          ctx.rotate(projectile.x * 0.015);
+          ctx.fillStyle = "#7f8580";
+          ctx.beginPath();
+          ctx.moveTo(-10, -7);
+          ctx.lineTo(1, -12);
+          ctx.lineTo(12, -4);
+          ctx.lineTo(8, 9);
+          ctx.lineTo(-5, 11);
+          ctx.closePath();
+          ctx.fill();
+          ctx.strokeStyle = "#c4c7bc";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+        } else {
+          ctx.fillStyle = "#ff8c24";
+          ctx.beginPath();
+          ctx.arc(projectile.x, projectile.y, 11, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#fff2ac";
+          ctx.beginPath();
+          ctx.arc(projectile.x, projectile.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       drawPlayer(ctx, g.player, g.form);
@@ -443,13 +515,13 @@ export default function VilgaxGame() {
   }
 
   function startGame() {
-    controlsRef.current = { left: false, right: false, jump: false, attack: false };
+    controlsRef.current = { left: false, right: false, jump: false, attack: false, special: false };
     setGameOver(false);
     setStarted(true);
   }
 
   function returnToMenu() {
-    controlsRef.current = { left: false, right: false, jump: false, attack: false };
+    controlsRef.current = { left: false, right: false, jump: false, attack: false, special: false };
     setGameOver(false);
     setStarted(false);
   }
@@ -533,21 +605,33 @@ export default function VilgaxGame() {
       </div>
 
       <div className="vilgax-game__controls">
-        <div className="movement-controls">
-          <HoldButton label="◀" control="left" />
-          <HoldButton label="▶" control="right" />
-          <HoldButton label="SALTAR" control="jump" />
+        <div className="movement-controls" aria-label="Movimiento">
+          <HoldButton label="◀" control="left" className="direction-control" />
+          <HoldButton label="▶" control="right" className="direction-control" />
+          <HoldButton label="SALTAR" control="jump" className="jump-control" />
         </div>
-        <HoldButton
-          label="ATACAR"
-          control="attack"
-          className="attack-control"
-        />
+        <div className="action-controls" aria-label="Ataques">
+          <HoldButton
+            label="ATAQUE · J"
+            control="attack"
+            className="attack-control"
+          />
+          <HoldButton
+            label="ESPECIAL · K"
+            control="special"
+            className="special-control"
+          />
+        </div>
       </div>
 
       <p className="vilgax-game__help">
-        Teclado: A/D o flechas para moverte, W/Espacio para saltar,
-        J para atacar y 1/2 para cambiar de forma.
+        <strong>Controles</strong>
+        <span> Mover: A/D o ←/→</span>
+        <span> Saltar: W o Espacio</span>
+        <span> Ataque: J</span>
+        <span> Especial: K</span>
+        <span> Cambiar forma: 1 / 2</span>
+        <span className="mobile-hint">En móvil, mantén pulsados los botones de movimiento y usa ATAQUE o ESPECIAL.</span>
       </p>
       {gameOver && (
         <button type="button" className="game-control vilgax-game__return" onClick={returnToMenu}>
