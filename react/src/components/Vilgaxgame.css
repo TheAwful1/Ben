@@ -244,3 +244,275 @@
     min-width: 135px;
   }
 }
+
+
+/* ---------- Vista de juego a pantalla completa ---------- */
+.vilgax-game {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #07130b;
+}
+
+.vilgax-game__screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: #07130b;
+}
+
+.vilgax-game__screen canvas {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+.vilgax-game__menu {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: auto;
+  padding: clamp(24px, 7vw, 100px);
+  border: 0;
+  border-radius: 0;
+  background-position: center;
+}
+
+.vilgax-game__menu-content {
+  max-width: 520px;
+}
+
+.vilgax-game__forms {
+  position: absolute;
+  z-index: 5;
+  top: max(76px, calc(env(safe-area-inset-top) + 70px));
+  right: max(12px, env(safe-area-inset-right));
+  width: min(420px, 48vw);
+  margin: 0;
+  padding: 8px;
+  border: 1px solid rgba(177, 221, 174, 0.35);
+  border-radius: 14px;
+  background: rgba(4, 15, 9, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.vilgax-game__controls {
+  position: absolute;
+  z-index: 6;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: max(14px, env(safe-area-inset-left));
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.movement-controls,
+.action-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.action-controls {
+  justify-content: flex-end;
+}
+
+.vilgax-game__controls .game-control {
+  min-height: 58px;
+  padding: 10px 14px;
+  background: rgba(28, 48, 43, 0.92);
+  border-color: rgba(220, 245, 221, 0.62);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+  touch-action: none;
+}
+
+.vilgax-game__controls .direction-control {
+  min-width: 58px;
+  font-size: 22px;
+}
+
+.vilgax-game__controls .jump-control {
+  min-width: 78px;
+}
+
+.vilgax-game__controls .attack-control {
+  min-width: 112px;
+  background: rgba(163, 59, 39, 0.95);
+  border-color: #f09a60;
+}
+
+.vilgax-game__controls .special-control {
+  min-width: 112px;
+  background: rgba(39, 76, 130, 0.95);
+  border-color: #90c7ff;
+}
+
+.vilgax-game__help {
+  position: absolute;
+  z-index: 4;
+  top: max(76px, calc(env(safe-area-inset-top) + 70px));
+  left: max(12px, env(safe-area-inset-left));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+  max-width: min(48vw, 570px);
+  margin: 0;
+  padding: 10px 13px;
+  border: 1px solid rgba(177, 221, 174, 0.35);
+  border-radius: 12px;
+  background: rgba(4, 15, 9, 0.72);
+  color: #eef8ed;
+  font-size: 13px;
+  line-height: 1.4;
+  backdrop-filter: blur(5px);
+}
+
+.vilgax-game__help strong {
+  color: #9eff6b;
+}
+
+.vilgax-game__help span {
+  white-space: nowrap;
+}
+
+.vilgax-game__help .mobile-hint {
+  white-space: normal;
+  width: 100%;
+  color: #c8e5c8;
+}
+
+.vilgax-game__return {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: max(100px, calc(env(safe-area-inset-bottom) + 90px));
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .vilgax-game__menu {
+    padding: 22px;
+    background-position: 58% center;
+  }
+
+  .vilgax-game__menu-content {
+    max-width: min(90vw, 380px);
+  }
+
+  .vilgax-game__eyebrow {
+    letter-spacing: 0.1em;
+  }
+
+  .vilgax-game__forms {
+    top: auto;
+    right: 10px;
+    bottom: max(95px, calc(env(safe-area-inset-bottom) + 90px));
+    left: 10px;
+    width: auto;
+    padding: 5px;
+    gap: 6px;
+  }
+
+  .vilgax-game__forms .game-control {
+    min-width: 0;
+    min-height: 43px;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+
+  .vilgax-game__help {
+    top: max(68px, calc(env(safe-area-inset-top) + 62px));
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    gap: 4px 8px;
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  .vilgax-game__controls {
+    right: 10px;
+    left: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    gap: 6px;
+  }
+
+  .movement-controls,
+  .action-controls {
+    gap: 5px;
+  }
+
+  .vilgax-game__controls .game-control {
+    min-height: 49px;
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .vilgax-game__controls .direction-control {
+    min-width: 38px;
+    font-size: 19px;
+  }
+
+  .vilgax-game__controls .jump-control {
+    min-width: 58px;
+  }
+
+  .vilgax-game__controls .attack-control,
+  .vilgax-game__controls .special-control {
+    min-width: 72px;
+    font-size: 10px;
+  }
+
+  .vilgax-game__return {
+    bottom: max(78px, calc(env(safe-area-inset-bottom) + 72px));
+  }
+}
+
+@media (orientation: portrait) and (max-width: 700px) {
+  .vilgax-game__screen canvas {
+    object-fit: contain;
+  }
+
+  .vilgax-game__menu {
+    background-position: 60% center;
+  }
+}
+
+
+/* Keep the original 16:9 game world proportional while filling the viewport. */
+.vilgax-game__screen canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100vw, 177.7778dvh);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+  object-fit: fill;
+}
+
+.vilgax-game__screen {
+  overflow: hidden;
+  background: #050908;
+}
