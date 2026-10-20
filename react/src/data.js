@@ -29,8 +29,8 @@ export const serie = {
 // Los 10 aliens originales del Omnitrix
 export const aliens = [
   {
-    id: 'heatblast',
-    nombre: 'Heatblast',
+    id: 'heatblast',//Tuve que traducir los nombres de los aliens al español, ya que en la wiki están en inglés y no se veían bien en la app.
+    nombre: 'Fuego',
     wiki: 'Heatblast',
     imagen: '/img/Heatblast_OS.webp',
     especie: 'Pyronite',
@@ -42,7 +42,7 @@ export const aliens = [
   },
   {
     id: 'wildmutt',
-    nombre: 'Wildmutt',
+    nombre: 'Bestia',
     wiki: 'Wildmutt',
     imagen: '/img/Wildmutt_OS.webp',
     especie: 'Vulpimancer',
@@ -54,7 +54,7 @@ export const aliens = [
   },
   {
     id: 'diamondhead',
-    nombre: 'Diamondhead',
+    nombre: 'Diamante',
     wiki: 'Diamondhead',
     imagen: '/img/Diamondhead_OS.webp',
     especie: 'Petrosapien',
@@ -78,7 +78,7 @@ export const aliens = [
   },
   {
     id: 'greymatter',
-    nombre: 'Grey Matter',
+    nombre: 'Materia Gris',
     wiki: 'Grey Matter',
     imagen: '/img/Grey_Matter_OS.webp',
     especie: 'Galvan',
@@ -90,7 +90,7 @@ export const aliens = [
   },
   {
     id: 'fourarms',
-    nombre: 'Four Arms',
+    nombre: 'Cuatro Brazos',
     wiki: 'Four Arms',
     imagen: '/img/ANDREW_ROBINSON_FOURARMS.webp',
     especie: 'Tetramand',
@@ -102,7 +102,7 @@ export const aliens = [
   },
   {
     id: 'stinkfly',
-    nombre: 'Stinkfly',
+    nombre: 'Insectoide',
     wiki: 'Stinkfly',
     imagen: '/img/Stinkfly_os_render.webp',
     especie: 'Lepidopterran',
@@ -114,7 +114,7 @@ export const aliens = [
   },
   {
     id: 'ripjaws',
-    nombre: 'Ripjaws',
+    nombre: 'Acuatico',
     wiki: 'Ripjaws',
     imagen: '/img/Ripjaws_OS.webp',
     especie: 'Piscciss Volann',
@@ -126,7 +126,7 @@ export const aliens = [
   },
   {
     id: 'upgrade',
-    nombre: 'Upgrade',
+    nombre: 'Ultra-T',
     wiki: 'Upgrade',
     imagen: '/img/Upgrade_Model.webp',
     especie: 'Galvanic Mechamorph',
@@ -138,7 +138,7 @@ export const aliens = [
   },
   {
     id: 'ghostfreak',
-    nombre: 'Ghostfreak',
+    nombre: 'Fantasmatico',
     wiki: 'Ghostfreak',
     imagen: '/img/GhostfreakPose2.webp',
     especie: 'Ectonurite',
@@ -218,15 +218,15 @@ export const momentos = [
     wiki: 'And Then There Were 10',
     detalle:
       'El inicio de todo: durante su viaje de verano, Ben encuentra un extraño aparato parecido a un reloj que se pega a su muñeca. En el primer episodio, "And Then There Were 10", descubre que puede convertirse en diez aliens distintos.',
-    video: '',
+    video: 'iyxSQNEi3os',
     archivo: '',
   },
   {
     id: 'm2',
-    titulo: 'Los cazarrecompensas de Vilgax',
+    titulo: 'Ben 10 vs Vilgax',
     wiki: 'Hunted',
     detalle:
-      'Ben enfrenta uno de sus mayores retos: Vilgax envía a tres cazarrecompensas alienígenas para recuperar el Omnitrix, y los aliens de Ben tienen que trabajar en equipo para sobrevivir.',
+      'Ben enfrenta uno de sus mayores retos: Vilgax!!.',
     video: '',
     archivo: '',
   },
@@ -243,11 +243,11 @@ export const momentos = [
 
 // ⚠️ DATOS DE EJEMPLO: pon los tuyos. Tu foto: guárdala en /public/yo.jpg
 export const contacto = {
-  nombre: 'Tu Nombre Aquí',
+  nombre: 'Edwin Felipe De La Cruz Montero',
   titulo: 'Desarrollador/a de aplicaciones móviles',
-  foto: '', // por ejemplo '/yo.jpg'
-  bio: 'Soy estudiante de desarrollo de software y me encanta crear apps divertidas. Si te gustó este proyecto, ¡hablemos!',
-  email: 'tucorreo@ejemplo.com',
-  telefono: '+1 809 000 0000',
+  foto: '/img/WhatsApp Image 2026-10-19 at 10.49.42 PM.jpeg',
+  bio: 'Soy estudiante de desarrollo de software. Si te gustó este proyecto, ¡hablemos!',
+  email: 'feliudd04@gmail.com',
+  telefono: '+1 809 923 4136',
   github: 'https://github.com/TheAwful1',
 }
