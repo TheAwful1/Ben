@@ -223,19 +223,21 @@ export const momentos = [
   },
   {
     id: 'm2',
-    titulo: 'Los cazarrecompensas de Vilgax',
-    wiki: 'Hunted',
+    titulo: 'Ben vs Vilgax',
+    wiki: 'Vilgax',
+    imagen: '/img/ben-vs-vilgax.webp',
     detalle:
-      'Ben enfrenta uno de sus mayores retos: Vilgax envía a tres cazarrecompensas alienígenas para recuperar el Omnitrix, y los aliens de Ben tienen que trabajar en equipo para sobrevivir.',
+      'Vilgax es el conquistador alienígena que quiere el Omnitrix a cualquier precio, y su enfrentamiento con Ben es uno de los momentos más importantes de la serie. Ben tiene que usar todos sus aliens, y la ayuda de Gwen y del Abuelo Max, para plantarle cara.',
     video: '',
     archivo: '',
   },
   {
     id: 'm3',
-    titulo: 'Ben conoce a Kevin 11',
+    titulo: 'Ben vs Kevin',
     wiki: 'Kevin 11 (episode)',
+    imagen: '/img/ben-vs-kevin.webp',
     detalle:
-      'Tras una discusión con el Abuelo Max, Ben se va solo a la ciudad y se encuentra con un chico que absorbe energía. Nace una de las rivalidades más recordadas de la serie.',
+      'Ben se encuentra con Kevin, un chico que absorbe energía, y terminan enfrentándose. Es el inicio de una de las rivalidades más recordadas de la serie.',
     video: '',
     archivo: '',
   },
