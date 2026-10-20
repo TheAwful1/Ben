@@ -1,7 +1,9 @@
-const Juego = () => {
-  return (
-  <>
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
-  <script src="game.js"></script>
-  </>)}
-  export default Juego
+import VilgaxGame from "../components/Vilgaxgame.jsx";
+
+const Juego = () => (
+  <main className="pagina pagina-juego">
+    <VilgaxGame />
+  </main>
+);
+
+export default Juego;
