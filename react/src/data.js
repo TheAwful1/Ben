@@ -225,9 +225,10 @@ export const momentos = [
     id: 'm2',
     titulo: 'Ben 10 vs Vilgax',
     wiki: 'Hunted',
+    imagen: '/img/ben-vs-vilgax.webp',
     detalle:
       'Ben enfrenta uno de sus mayores retos: Vilgax!!.',
-    video: '',
+    video: 'J7JflCDMkSg',
     archivo: '',
   },
   {
@@ -237,7 +238,7 @@ export const momentos = [
     imagen: '/img/ben-vs-kevin.webp',
     detalle:
       'Ben se encuentra con Kevin, un chico que absorbe energía, y terminan enfrentándose. Es el inicio de una de las rivalidades más recordadas de la serie.',
-    video: '',
+    video: '1Yr5plnq2kA',
     archivo: '',
   },
 ]

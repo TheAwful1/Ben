@@ -1,0 +1,517 @@
+import VilgaxGame from "./components/VilgaxGame";
+
+import { useEffect, useRef } from "react";
+import "./VilgaxGame.css";
+
+const WIDTH = 960;
+const HEIGHT = 540;
+const GROUND = 430;
+
+const createGame = () => ({
+  form: "fire",
+  player: {
+    x: 130, y: GROUND - 72, w: 42, h: 72,
+    vx: 0, vy: 0, hp: 100, face: 1,
+    onGround: true, invuln: 0,
+    attackCooldown: 0, attackAnim: 0,
+  },
+  boss: {
+    x: 735, y: GROUND - 105, w: 76, h: 105,
+    hp: 180, face: -1, attackCooldown: 0,
+    stun: 0,
+  },
+  projectiles: [],
+  controls: { left: false, right: false, jump: false, attack: false },
+  jumpLocked: false,
+});
+
+function drawHealthBar(ctx, x, y, width, hp, maxHp, color, label) {
+  ctx.fillStyle = "#141820";
+  ctx.fillRect(x, y, width, 19);
+  ctx.fillStyle = "#3c4149";
+  ctx.fillRect(x + 2, y + 2, width - 4, 15);
+  ctx.fillStyle = color;
+  ctx.fillRect(x + 2, y + 2, (width - 4) * Math.max(0, hp / maxHp), 15);
+  ctx.strokeStyle = "#e4e7eb";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x, y, width, 19);
+  ctx.fillStyle = "white";
+  ctx.font = "bold 15px sans-serif";
+  ctx.fillText(`${label}  ${Math.max(0, Math.ceil(hp))}/${maxHp}`, x, y - 7);
+}
+
+function drawBackground(ctx) {
+  const sky = ctx.createLinearGradient(0, 0, 0, GROUND);
+  sky.addColorStop(0, "#142d36");
+  sky.addColorStop(1, "#426b50");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+  // Montañas y vegetación lejana
+  ctx.fillStyle = "#294b40";
+  ctx.beginPath();
+  ctx.moveTo(0, 330);
+  ctx.lineTo(150, 195);
+  ctx.lineTo(280, 330);
+  ctx.lineTo(420, 215);
+  ctx.lineTo(590, 335);
+  ctx.lineTo(760, 200);
+  ctx.lineTo(960, 330);
+  ctx.lineTo(960, GROUND);
+  ctx.lineTo(0, GROUND);
+  ctx.fill();
+
+  // Árboles de la jungla
+  for (let i = 0; i < 10; i++) {
+    const x = i * 112 - 20;
+    ctx.fillStyle = "#26392c";
+    ctx.fillRect(x + 27, 255, 19, 180);
+    ctx.fillStyle = i % 2 ? "#355c3c" : "#3e6942";
+    ctx.beginPath();
+    ctx.arc(x + 35, 255, 62, 0, Math.PI * 2);
+    ctx.arc(x, 290, 43, 0, Math.PI * 2);
+    ctx.arc(x + 72, 292, 45, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Ruinas y pilares
+  ctx.fillStyle = "#62675c";
+  ctx.fillRect(75, 337, 48, 93);
+  ctx.fillRect(64, 329, 70, 12);
+  ctx.fillRect(815, 315, 53, 115);
+  ctx.fillRect(805, 307, 72, 13);
+  ctx.fillStyle = "#444d46";
+  ctx.fillRect(92, 348, 5, 70);
+  ctx.fillRect(834, 328, 6, 90);
+
+  // Suelo
+  ctx.fillStyle = "#51442f";
+  ctx.fillRect(0, GROUND, WIDTH, HEIGHT - GROUND);
+  ctx.fillStyle = "#648448";
+  ctx.fillRect(0, GROUND, WIDTH, 9);
+
+  ctx.fillStyle = "#796340";
+  for (let i = 0; i < 34; i++) {
+    const x = (i * 83 + 21) % WIDTH;
+    const y = GROUND + 20 + (i * 17) % 95;
+    ctx.fillRect(x, y, 8 + (i % 3) * 4, 3);
+  }
+}
+
+function drawPlayer(ctx, p, form) {
+  if (p.invuln > 0 && Math.floor(Date.now() / 85) % 2 === 0) {
+    return;
+  }
+
+  const x = p.x;
+  const y = p.y;
+  const fire = form === "fire";
+
+  // Llamas decorativas
+  if (fire) {
+    ctx.fillStyle = "#ffb52c";
+    ctx.beginPath();
+    ctx.moveTo(x + 7, y + 23);
+    ctx.lineTo(x + 4, y + 3);
+    ctx.lineTo(x + 18, y + 15);
+    ctx.lineTo(x + 24, y - 10);
+    ctx.lineTo(x + 31, y + 15);
+    ctx.lineTo(x + 41, y + 2);
+    ctx.lineTo(x + 38, y + 28);
+    ctx.fill();
+  }
+
+  const skin = fire ? "#e45b27" : "#ba383f";
+  const outfit = fire ? "#252c35" : "#303b35";
+
+  // Piernas
+  ctx.fillStyle = outfit;
+  ctx.fillRect(x + 7, y + 47, 12, 25);
+  ctx.fillRect(x + 24, y + 47, 12, 25);
+
+  // Torso
+  ctx.fillStyle = skin;
+  ctx.fillRect(x + 5, y + 22, 32, 30);
+
+  // Ropa y cinturón
+  ctx.fillStyle = outfit;
+  ctx.fillRect(x + 8, y + 36, 26, 15);
+  ctx.fillStyle = "#a7ad56";
+  ctx.fillRect(x + 9, y + 35, 24, 5);
+
+  // Cabeza
+  ctx.fillStyle = skin;
+  ctx.fillRect(x + 11, y + 5, 22, 22);
+  ctx.fillStyle = "#171e22";
+  ctx.fillRect(x + 11, y + 5, 22, 6);
+
+  // Brazos
+  ctx.fillStyle = skin;
+  ctx.fillRect(x - 3, y + 24, 10, 26);
+  ctx.fillRect(x + 35, y + 24, 10, 26);
+
+  if (!fire) {
+    // Segundo par de brazos de Cuatro Brazos
+    ctx.fillRect(x - 10, y + 29, 10, 20);
+    ctx.fillRect(x + 42, y + 29, 10, 20);
+    ctx.fillStyle = "#292f30";
+    ctx.fillRect(x + 7, y + 17, 28, 8);
+  }
+
+  // Indicador de dirección
+  ctx.fillStyle = "#f8edc1";
+  const eyeX = p.face > 0 ? x + 27 : x + 13;
+  ctx.fillRect(eyeX, y + 14, 5, 4);
+
+  // Animación de ataque cuerpo a cuerpo
+  if (!fire && p.attackAnim > 0) {
+    ctx.strokeStyle = "#ffe6a0";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    const side = p.face;
+    ctx.arc(
+      x + 21 + side * 25,
+      y + 31,
+      25,
+      side > 0 ? -0.9 : Math.PI - 0.9,
+      side > 0 ? 0.9 : Math.PI + 0.9
+    );
+    ctx.stroke();
+  }
+}
+
+function drawVilgax(ctx, b) {
+  const x = b.x;
+  const y = b.y;
+
+  // Piernas y armadura
+  ctx.fillStyle = "#242c30";
+  ctx.fillRect(x + 10, y + 68, 21, 37);
+  ctx.fillRect(x + 45, y + 68, 21, 37);
+
+  // Cuerpo
+  ctx.fillStyle = "#842f36";
+  ctx.fillRect(x + 7, y + 29, 62, 48);
+  ctx.fillStyle = "#363e43";
+  ctx.fillRect(x + 13, y + 47, 50, 30);
+
+  // Hombros
+  ctx.fillStyle = "#a83f3b";
+  ctx.fillRect(x - 2, y + 31, 24, 24);
+  ctx.fillRect(x + 54, y + 31, 24, 24);
+
+  // Cabeza y piel
+  ctx.fillStyle = "#476a55";
+  ctx.fillRect(x + 17, y + 2, 44, 35);
+  ctx.fillStyle = "#1a2025";
+  ctx.fillRect(x + 14, y, 49, 11);
+
+  // Ojos
+  ctx.fillStyle = "#ff392f";
+  ctx.fillRect(x + 23, y + 17, 9, 5);
+  ctx.fillRect(x + 47, y + 17, 9, 5);
+
+  // Puños
+  ctx.fillStyle = "#566b5a";
+  ctx.fillRect(x - 5, y + 52, 18, 17);
+  ctx.fillRect(x + 63, y + 52, 18, 17);
+}
+
+export default function VilgaxGame() {
+  const canvasRef = useRef(null);
+  const gameRef = useRef(null);
+  const controlsRef = useRef({
+    left: false, right: false, jump: false, attack: false,
+  });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+
+    const g = createGame();
+    gameRef.current = g;
+    let raf = 0;
+    let lastTime = 0;
+
+    const keys = new Set();
+
+    const onKeyDown = (e) => {
+      const key = e.key.toLowerCase();
+      if ([" ", "arrowleft", "arrowright", "arrowup"].includes(key)) {
+        e.preventDefault();
+      }
+      keys.add(key);
+
+      if (key === "1") g.form = "fire";
+      if (key === "2") g.form = "fourarms";
+    };
+
+    const onKeyUp = (e) => keys.delete(e.key.toLowerCase());
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
+    function update(dt) {
+      const p = g.player;
+      const b = g.boss;
+      const c = controlsRef.current;
+
+      if (p.hp <= 0 || b.hp <= 0) return;
+
+      const left = c.left || keys.has("a") || keys.has("arrowleft");
+      const right = c.right || keys.has("d") || keys.has("arrowright");
+      const jump = c.jump || keys.has("w") || keys.has("arrowup") || keys.has(" ");
+
+      if (keys.has("j")) c.attack = true;
+      else if (!c.attack) c.attack = false;
+
+      p.vx = 0;
+      if (left) {
+        p.vx = -220;
+        p.face = -1;
+      }
+      if (right) {
+        p.vx = 220;
+        p.face = 1;
+      }
+
+      if (jump && p.onGround && !g.jumpLocked) {
+        p.vy = -480;
+        p.onGround = false;
+        g.jumpLocked = true;
+      }
+      if (!jump) g.jumpLocked = false;
+
+      p.x += p.vx * dt;
+      p.vy += 1250 * dt;
+      p.y += p.vy * dt;
+
+      if (p.y + p.h >= GROUND) {
+        p.y = GROUND - p.h;
+        p.vy = 0;
+        p.onGround = true;
+      }
+
+      p.x = Math.max(8, Math.min(WIDTH - p.w - 8, p.x));
+
+      p.invuln = Math.max(0, p.invuln - dt);
+      p.attackCooldown = Math.max(0, p.attackCooldown - dt);
+      p.attackAnim = Math.max(0, p.attackAnim - dt);
+      b.attackCooldown = Math.max(0, b.attackCooldown - dt);
+      b.stun = Math.max(0, b.stun - dt);
+
+      const playerCenter = p.x + p.w / 2;
+      const bossCenter = b.x + b.w / 2;
+      const distance = playerCenter - bossCenter;
+
+      // Vilgax persigue al jugador y ataca cuando está cerca.
+      b.face = distance < 0 ? -1 : 1;
+
+      if (Math.abs(distance) > 92 && b.stun <= 0) {
+        b.x += Math.sign(distance) * 105 * dt;
+      } else if (b.attackCooldown <= 0) {
+        if (Math.abs(distance) < 112 && p.invuln <= 0) {
+          p.hp = Math.max(0, p.hp - 13);
+          p.invuln = 0.9;
+        }
+        b.attackCooldown = 1.15;
+      }
+
+      b.x = Math.max(450, Math.min(WIDTH - b.w - 8, b.x));
+
+      // Un único botón de ataque. La forma seleccionada decide el efecto.
+      if (c.attack && p.attackCooldown <= 0) {
+        p.attackCooldown = g.form === "fire" ? 0.55 : 0.7;
+        p.attackAnim = 0.22;
+
+        if (g.form === "fire") {
+          g.projectiles.push({
+            x: playerCenter + p.face * 25,
+            y: p.y + 32,
+            vx: p.face * 440,
+            life: 1.6,
+            damage: 18,
+          });
+        } else if (
+          Math.abs(distance) < 135 &&
+          Math.sign(distance) === p.face
+        ) {
+          b.hp = Math.max(0, b.hp - 28);
+          b.stun = 0.2;
+          b.x += p.face * 10;
+        }
+      }
+
+      for (const projectile of g.projectiles) {
+        projectile.x += projectile.vx * dt;
+        projectile.life -= dt;
+
+        if (
+          projectile.life > 0 &&
+          projectile.x >= b.x - 10 &&
+          projectile.x <= b.x + b.w + 10 &&
+          projectile.y >= b.y &&
+          projectile.y <= GROUND
+        ) {
+          b.hp = Math.max(0, b.hp - projectile.damage);
+          b.stun = 0.16;
+          projectile.life = 0;
+        }
+      }
+
+      g.projectiles = g.projectiles.filter(
+        (projectile) =>
+          projectile.life > 0 &&
+          projectile.x > -30 &&
+          projectile.x < WIDTH + 30
+      );
+    }
+
+    function draw() {
+      drawBackground(ctx);
+
+      // Barras de salud
+      drawHealthBar(ctx, 28, 35, 300, g.player.hp, 100, "#36c96a", "BEN");
+      drawHealthBar(ctx, 630, 35, 300, g.boss.hp, 180, "#dc4545", "VILGAX");
+
+      // Identificador de transformación
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 17px sans-serif";
+      ctx.fillText(
+        g.form === "fire" ? "FUEGO" : "CUATRO BRAZOS",
+        28,
+        83
+      );
+
+      // Proyectiles de fuego
+      for (const projectile of g.projectiles) {
+        ctx.fillStyle = "#ffb326";
+        ctx.beginPath();
+        ctx.arc(projectile.x, projectile.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff2ac";
+        ctx.beginPath();
+        ctx.arc(projectile.x, projectile.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      drawPlayer(ctx, g.player, g.form);
+      drawVilgax(ctx, g.boss);
+
+      if (g.player.hp <= 0 || g.boss.hp <= 0) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.font = "bold 42px sans-serif";
+        ctx.fillText(
+          g.boss.hp <= 0 ? "¡VILGAX DERROTADO!" : "HAS SIDO DERROTADO",
+          WIDTH / 2,
+          HEIGHT / 2
+        );
+        ctx.font = "20px sans-serif";
+        ctx.fillText("Recarga la página para volver a jugar", WIDTH / 2, HEIGHT / 2 + 42);
+        ctx.textAlign = "left";
+      }
+    }
+
+    function frame(time) {
+      const dt = Math.min((time - lastTime) / 1000 || 0, 0.033);
+      lastTime = time;
+      update(dt);
+      draw();
+      raf = requestAnimationFrame(frame);
+    }
+
+    raf = requestAnimationFrame(frame);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+      gameRef.current = null;
+    };
+  }, []);
+
+  function setControl(name, value) {
+    controlsRef.current[name] = value;
+  }
+
+  function chooseForm(form) {
+    if (gameRef.current) gameRef.current.form = form;
+  }
+
+  function HoldButton({ label, control, className = "" }) {
+    return (
+      <button
+        type="button"
+        className={`game-control ${className}`}
+        aria-label={label}
+        onPointerDown={(e) => {
+          e.preventDefault();
+          setControl(control, true);
+          e.currentTarget.setPointerCapture?.(e.pointerId);
+        }}
+        onPointerUp={() => setControl(control, false)}
+        onPointerCancel={() => setControl(control, false)}
+        onLostPointerCapture={() => setControl(control, false)}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        {label}
+      </button>
+    );
+  }
+
+  return (
+    <section className="vilgax-game">
+      <div className="vilgax-game__screen">
+        <canvas
+          ref={canvasRef}
+          width={WIDTH}
+          height={HEIGHT}
+          aria-label="Juego de lucha contra Vilgax"
+        />
+      </div>
+
+      <div className="vilgax-game__forms">
+        <button
+          type="button"
+          className="game-control form-control"
+          onClick={() => chooseForm("fire")}
+        >
+          🔥 Fuego <small>1</small>
+        </button>
+        <button
+          type="button"
+          className="game-control form-control"
+          onClick={() => chooseForm("fourarms")}
+        >
+          💪 Cuatro Brazos <small>2</small>
+        </button>
+      </div>
+
+      <div className="vilgax-game__controls">
+        <div className="movement-controls">
+          <HoldButton label="◀" control="left" />
+          <HoldButton label="▶" control="right" />
+          <HoldButton label="SALTAR" control="jump" />
+        </div>
+        <HoldButton
+          label="ATACAR"
+          control="attack"
+          className="attack-control"
+        />
+      </div>
+
+      <p className="vilgax-game__help">
+        Teclado: A/D o flechas para moverte, W/Espacio para saltar,
+        J para atacar y 1/2 para cambiar de forma.
+      </p>
+    </section>
+  );
+}
+
+export default function GameView() {
+  return <VilgaxGame />;
+}

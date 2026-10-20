@@ -1,0 +1,141 @@
+
+.vilgax-game {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px;
+  color: #fff;
+  background: #111a1d;
+  border: 1px solid #344448;
+  border-radius: 14px;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+.vilgax-game__screen {
+  width: 100%;
+  overflow: hidden;
+  background: #142d36;
+  border: 2px solid #52675c;
+  border-radius: 8px;
+}
+
+.vilgax-game__screen canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+.vilgax-game__forms,
+.vilgax-game__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.game-control {
+  min-height: 54px;
+  padding: 12px 18px;
+  border: 1px solid #667a7b;
+  border-radius: 12px;
+  background: #283a3e;
+  color: white;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+.game-control:active {
+  background: #49615e;
+  transform: scale(0.96);
+}
+
+.form-control {
+  flex: 1;
+  background: #203b31;
+}
+
+.form-control small {
+  margin-left: 8px;
+  opacity: 0.65;
+}
+
+.movement-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.movement-controls .game-control {
+  min-width: 58px;
+  min-height: 58px;
+}
+
+.attack-control {
+  min-width: 110px;
+  min-height: 70px;
+  border-color: #e87b39;
+  background: #a33b27;
+  font-size: 17px;
+}
+
+.attack-control:active {
+  background: #cf5433;
+}
+
+.vilgax-game__help {
+  margin: 12px 2px 2px;
+  color: #b6c4c4;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .vilgax-game {
+    padding: 6px;
+    border-radius: 8px;
+  }
+
+  .vilgax-game__forms,
+  .vilgax-game__controls {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .game-control {
+    min-height: 48px;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .movement-controls {
+    gap: 5px;
+  }
+
+  .movement-controls .game-control {
+    min-width: 42px;
+    min-height: 54px;
+  }
+
+  .attack-control {
+    min-width: 86px;
+    min-height: 62px;
+    font-size: 14px;
+  }
+
+  .form-control {
+    font-size: 12px;
+  }
+
+  .form-control small {
+    margin-left: 3px;
+  }
+}
